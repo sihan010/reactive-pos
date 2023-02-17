@@ -1,11 +1,13 @@
 ## POS application backend
 ### Powered by
-<img src="https://upload.wikimedia.org/wikipedia/commons/7/74/Kotlin_Icon.png" height="40px"/> 
-<img src="https://logodix.com/logo/1614292.png" height="40px"/>
-<img src="https://avatars.githubusercontent.com/u/4201559?s=280&v=4" height="40px"/>
-<img src="https://wiki.postgresql.org/images/9/9a/PostgreSQL_logo.3colors.540x557.png" height="40px"/>
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/GraphQL_Logo.svg/1024px-GraphQL_Logo.svg.png" height="40px"/>
-<img src="https://upload.wikimedia.org/wikipedia/commons/7/79/Docker_%28container_engine%29_logo.png" height="40px"/>
+<p float="left">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/7/74/Kotlin_Icon.png" height="40px"/> 
+    <img src="https://logodix.com/logo/1614292.png" height="40px"/>
+    <img src="https://avatars.githubusercontent.com/u/4201559?s=280&v=4" height="40px"/>
+    <img src="https://wiki.postgresql.org/images/9/9a/PostgreSQL_logo.3colors.540x557.png" height="40px"/>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/GraphQL_Logo.svg/1024px-GraphQL_Logo.svg.png" height="40px"/>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/7/79/Docker_%28container_engine%29_logo.png" height="40px"/>
+</p>
 
 <b>A demo API build with Kotlin, Reactive spring boot, PostgreSQL, GraphQL. Deployed with Docker.</b>
 
@@ -56,16 +58,10 @@ Below are the variables and their default value.
     <tr>
         <td><code>application</code></td>
         <td><code>SPRING_DATASOURCE_URL</code></td>
-        <td>
-            <code>
-                r2dbc:postgresql://postgres:postgres@postgres:5432/postgres?currentSchema=pos_schema
-            </code>
+        <td><code>r2dbc:postgresql://postgres:postgres@postgres:5432/postgres?currentSchema=pos_schema</code>
             <br/>
             <br/>
-            <i>Connection URI pattern</i>: 
-            <code>
-                r2dbc:driver://user:pass@host:port/db_name?currentSchema=schema
-            </code> 
+            <i>Connection URI pattern</i>: <code>r2dbc:driver://user:pass@host:port/db_name?currentSchema=schema</code> 
         </td>
     </tr>
     <tr>
@@ -157,9 +153,9 @@ Some data are seeded to PostgreSQL during initialization, so you can run below q
     mutation {
       MakePayment(payment:{
     	price:"100.00",
-                    priceModifier: 0.95,
-                    paymentMethod:"MASTERCARD",
-                    dateTime:"2022-09-01T00:00:00Z"
+        priceModifier: 0.95,
+        paymentMethod:"MASTERCARD",
+        dateTime:"2022-09-01T00:00:00Z"
       }){
         finalPrice,
         points
