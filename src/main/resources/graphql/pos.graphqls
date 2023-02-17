@@ -1,0 +1,12 @@
+# Queries
+type Query {
+    GetAllPaymentMethods: [PaymentMethod]!
+    GetSinglePaymentMethodByType(type: String!): PaymentMethod
+    GetSalesHistory(startDateTime: String!, endDateTime: String!): [SalesHistoryOut]!
+}
+
+# Mutations
+type Mutation {
+    AddSinglePaymentMethod(paymentMethod: PaymentMethodIn!): PaymentMethod
+    MakePayment(payment: PaymentIn!): PaymentOut
+}

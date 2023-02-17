@@ -1,0 +1,17 @@
+spring:
+  graphql:
+    path: /secretGraphql
+    graphiql:
+      enabled: true
+      path: /secretGraphiql
+
+  r2dbc:
+    url: ${SPRING_DATASOURCE_URL}
+    pool:
+      enabled: true
+      initial-size: 5
+      max-size: 10
+
+logging:
+  level:
+    org.springframework : ${SPRING_LOG_LEVEL}

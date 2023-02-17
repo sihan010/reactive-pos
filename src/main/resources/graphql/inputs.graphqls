@@ -1,0 +1,14 @@
+# Input types
+input PaymentMethodIn {
+    paymentMethod: String!
+    priceModifierFrom: Float!
+    priceModifierTo: Float!
+    points: Float!
+}
+
+input PaymentIn{
+    price: String!,
+    priceModifier: Float!,
+    paymentMethod: String!,
+    dateTime: String!
+}

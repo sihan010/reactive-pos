@@ -1,0 +1,47 @@
+version: "3"
+services:
+  postgres:
+    image: postgres:15.2-alpine
+    container_name: postgres_15.2
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres_volume:/var/lib/postgresql/data
+      - ./db_seed.sql:/docker-entrypoint-initdb.d
+    restart: always
+
+  pgadmin:
+    image: dpage/pgadmin4:6.11
+    container_name: pgadmin_6.11
+    ports:
+      - "5433:80"
+    volumes:
+      - pgadmin_volume:/var/lib/pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=sihan@sihan.dev
+      - PGADMIN_DEFAULT_PASSWORD=abc123.
+    depends_on:
+      - postgres
+    restart: on-failure
+
+  application:
+    build: .
+    image: sihan/pos_application:1.0.0
+    container_name: pos-application
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    links:
+      - postgres
+    restart: always
+    environment:
+      - SPRING_DATASOURCE_URL=r2dbc:postgresql://postgres:postgres@postgres:5432/postgres?currentSchema=pos_schema
+      - SPRING_LOG_LEVEL=INFO
+
+volumes:
+  postgres_volume:
+  pgadmin_volume:

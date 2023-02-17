@@ -1,0 +1,22 @@
+# Types
+# We could use Union types if we want to send different response depending on business logic
+type PaymentMethod {
+    paymentMethodId: String!
+    paymentMethod: String!
+    priceModifierFrom: Float!
+    priceModifierTo: Float!
+    points: Float!
+    createdAt: String!
+    updatedAt: String!
+}
+
+type PaymentOut{
+    finalPrice: String,
+    points: Float
+}
+
+type SalesHistoryOut{
+    dateTime: String,
+    sales: String,
+    points: Float
+}

@@ -1,0 +1,8 @@
+.gradle
+.idea
+.gitignore
+build
+db_seed.sql
+docker-compose.yaml
+Dockerfile
+README.md
