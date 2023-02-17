@@ -2,7 +2,7 @@
 .idea
 .gitignore
 build
-db_seed.sql
+db
 docker-compose.yaml
 Dockerfile
 README.md

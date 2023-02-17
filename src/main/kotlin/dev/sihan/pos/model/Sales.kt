@@ -14,7 +14,7 @@ data class Sales(
 )
 
 fun Sales.toSalesHistoryOut() = SalesHistoryOut(
-    createdAt.toString(),
+    createdAt,
     sales.toString(),
     points
 )

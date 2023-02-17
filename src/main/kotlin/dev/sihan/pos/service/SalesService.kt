@@ -58,9 +58,8 @@ class SalesService(
                     ErrorType.ExecutionAborted,
                     "Could not make payment"
                 )
-            } else {
-                PaymentOut(it.sales.toString(), it.points)
-            }
+            } else PaymentOut(it.sales.toString(), it.points)
+
         }
     }
 
@@ -78,7 +77,5 @@ class SalesService(
                 "Invalid date range"
             )
         }
-
-        // return Flux.just(SalesHistoryOut(OffsetDateTime.now().toString(), "100.88", 10.1f))
     }
 }
