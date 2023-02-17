@@ -152,7 +152,7 @@ Some data are seeded to PostgreSQL during initialization, so you can run below q
 
     mutation {
       MakePayment(payment:{
-    	price:"100.00",
+        price:"100.00",
         priceModifier: 0.95,
         paymentMethod:"MASTERCARD",
         dateTime:"2022-09-01T00:00:00Z"

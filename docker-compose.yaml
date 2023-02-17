@@ -44,7 +44,7 @@ services:
       - SPRING_LOG_LEVEL=INFO
       - SPRING_GRAPHQL_PATH=/graphql
       - SPRING_GRAPHIQL_ENABLED=true
-      - SPRING_GRAPHIQL_URL=/graphqil
+      - SPRING_GRAPHIQL_URL=/graphiql
 
 volumes:
   postgres_volume:
