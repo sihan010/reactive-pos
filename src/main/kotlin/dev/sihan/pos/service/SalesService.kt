@@ -58,8 +58,9 @@ class SalesService(
                     ErrorType.ExecutionAborted,
                     "Could not make payment"
                 )
-            } else PaymentOut(it.sales.toString(), it.points)
-
+            } else {
+                PaymentOut(it.sales.toString(), it.points)
+            }
         }
     }
 

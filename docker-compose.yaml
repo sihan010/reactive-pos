@@ -39,8 +39,12 @@ services:
       - postgres
     restart: always
     environment:
+      - SPRING_PORT=8080
       - SPRING_DATASOURCE_URL=r2dbc:postgresql://postgres:postgres@postgres:5432/postgres?currentSchema=pos_schema
       - SPRING_LOG_LEVEL=INFO
+      - SPRING_GRAPHQL_PATH=/graphql
+      - SPRING_GRAPHIQL_ENABLED=true
+      - SPRING_GRAPHIQL_URL=/graphqil
 
 volumes:
   postgres_volume:

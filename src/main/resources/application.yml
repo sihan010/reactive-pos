@@ -1,17 +1,18 @@
 spring:
   graphql:
-    path: /secretGraphql
+    path: ${SPRING_GRAPHQL_PATH:/graphql}
     graphiql:
-      enabled: true
-      path: /secretGraphiql
+      enabled: ${SPRING_GRAPHIQL_ENABLED:true}
+      path: ${SPRING_GRAPHIQL_URL:/graphqil}
 
   r2dbc:
-    url: ${SPRING_DATASOURCE_URL}
+    url: ${SPRING_DATASOURCE_URL:r2dbc:postgresql://postgres:postgres@localhost:5432/postgres?currentSchema=pos_schema}
     pool:
       enabled: true
       initial-size: 5
       max-size: 10
-
+server:
+  port: ${SPRING_PORT:8080}
 logging:
   level:
-    org.springframework : ${SPRING_LOG_LEVEL}
+    org.springframework : ${SPRING_LOG_LEVEL:INFO}
