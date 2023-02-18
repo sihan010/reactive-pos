@@ -7,7 +7,6 @@ import dev.sihan.pos.dto.validate
 import dev.sihan.pos.model.PaymentMethod
 import dev.sihan.pos.repository.PaymentMethodRepository
 import graphql.ErrorType
-import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -16,21 +15,34 @@ import reactor.core.publisher.Mono
 class PaymentMethodService(private val paymentMethodRepository: PaymentMethodRepository) {
     fun getAllPaymentMethods(): Flux<PaymentMethod> = paymentMethodRepository.findAll()
 
-    suspend fun getSinglePaymentMethodByType(type: String) =
-        paymentMethodRepository.findByPaymentMethod(type).awaitSingleOrNull().let {
-            if (it == null) {
-                throw PosApplicationError(
+    fun getSinglePaymentMethodByType(type: String) =
+        paymentMethodRepository.findByPaymentMethod(type).doOnError {
+            throw PosApplicationError(
+                ErrorType.ExecutionAborted,
+                "Internal server error"
+            )
+        }.switchIfEmpty(
+            Mono.error {
+                PosApplicationError(
                     ErrorType.DataFetchingException,
                     "Payment method with type $type was not found"
                 )
             }
-            it
-        }
+        )
 
-    suspend fun addPaymentMethod(paymentMethodIn: PaymentMethodIn): Mono<PaymentMethod> {
-        paymentMethodIn.validate()
-        return paymentMethodRepository.findByPaymentMethod(paymentMethodIn.paymentMethod).awaitSingleOrNull().let {
-            if (it != null) {
+    fun addPaymentMethod(paymentMethodIn: PaymentMethodIn): Mono<PaymentMethod> {
+        try {
+            paymentMethodIn.validate()
+        } catch (ex: PosApplicationError) {
+            return Mono.error(ex)
+        }
+        return paymentMethodRepository.findByPaymentMethod(paymentMethodIn.paymentMethod).doOnError {
+            throw PosApplicationError(
+                ErrorType.ExecutionAborted,
+                "Internal server error"
+            )
+        }.hasElement().flatMap {
+            if (it) {
                 throw PosApplicationError(
                     ErrorType.ValidationError,
                     "Payment method with type ${paymentMethodIn.paymentMethod} already exists"

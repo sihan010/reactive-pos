@@ -23,12 +23,12 @@ class PaymentMethodController(private val paymentMethodService: PaymentMethodSer
     }
 
     @QueryMapping("GetSinglePaymentMethodByType")
-    suspend fun getSinglePaymentMethodByType(@Argument type: String): PaymentMethod {
+    fun getSinglePaymentMethodByType(@Argument type: String): Mono<PaymentMethod> {
         return paymentMethodService.getSinglePaymentMethodByType(type)
     }
 
     @MutationMapping("AddSinglePaymentMethod")
-    suspend fun addPaymentMethod(@Argument paymentMethod: PaymentMethodIn): Mono<PaymentMethod> {
+    fun addPaymentMethod(@Argument paymentMethod: PaymentMethodIn): Mono<PaymentMethod> {
         return paymentMethodService.addPaymentMethod(paymentMethod)
     }
 }
