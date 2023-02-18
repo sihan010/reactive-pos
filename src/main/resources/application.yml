@@ -3,7 +3,7 @@ spring:
     path: ${SPRING_GRAPHQL_PATH:/graphql}
     graphiql:
       enabled: ${SPRING_GRAPHIQL_ENABLED:true}
-      path: ${SPRING_GRAPHIQL_URL:/graphqil}
+      path: ${SPRING_GRAPHIQL_URL:/graphiql}
 
   r2dbc:
     url: ${SPRING_DATASOURCE_URL:r2dbc:postgresql://postgres:postgres@localhost:5432/postgres?currentSchema=pos_schema}
@@ -11,8 +11,10 @@ spring:
       enabled: true
       initial-size: 5
       max-size: 10
+
 server:
   port: ${SPRING_PORT:8080}
+
 logging:
   level:
     org.springframework : ${SPRING_LOG_LEVEL:INFO}

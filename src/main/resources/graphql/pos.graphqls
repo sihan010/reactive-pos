@@ -2,7 +2,7 @@
 type Query {
     GetAllPaymentMethods: [PaymentMethod]!
     GetSinglePaymentMethodByType(type: String!): PaymentMethod
-    GetSalesHistory(startDateTime: String!, endDateTime: String!): [SalesHistoryOut]!
+    GetSalesHistory(startDateTime: String!, endDateTime: String!): [SalesHistoryOut]
 }
 
 # Mutations
