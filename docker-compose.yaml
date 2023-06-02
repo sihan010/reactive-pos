@@ -29,7 +29,7 @@ services:
 
   application:
     build: .
-    image: sihan/pos_application:1.0.0
+    image: sihan/pos_application:1.1.0
     container_name: pos-application
     ports:
       - "8080:8080"

@@ -10,10 +10,9 @@ import dev.sihan.pos.model.toSalesHistoryOut
 import dev.sihan.pos.repository.PaymentMethodRepository
 import dev.sihan.pos.repository.SalesRepository
 import graphql.ErrorType
-import kotlinx.coroutines.reactor.awaitSingleOrNull
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import java.time.OffsetDateTime
 import java.time.format.DateTimeParseException
 
@@ -22,44 +21,63 @@ class SalesService(
     private val paymentMethodRepository: PaymentMethodRepository,
     private val salesRepository: SalesRepository
 ) {
-    private val logger = LoggerFactory.getLogger(this::class.java)
-
-    suspend fun addSale(paymentIn: PaymentIn): PaymentOut {
+    fun addSale(paymentIn: PaymentIn): Mono<PaymentOut> {
         // Input validation
-        paymentIn.validate()
-        val paymentMethod = paymentMethodRepository.findByPaymentMethod(paymentIn.paymentMethod).awaitSingleOrNull()
-            ?: throw PosApplicationError(
-                ErrorType.DataFetchingException,
-                "Payment method with type ${paymentIn.paymentMethod} was not found"
-            )
-        if (paymentIn.priceModifier < paymentMethod.priceModifierFrom ||
-            paymentIn.priceModifier > paymentMethod.priceModifierTo
-        ) {
-            throw PosApplicationError(
-                ErrorType.DataFetchingException,
-                "Price Modifier must be between ${paymentMethod.priceModifierFrom} and ${paymentMethod.priceModifierTo}"
-            )
+        try {
+            paymentIn.validate()
+        } catch (ex: PosApplicationError) {
+            return Mono.error(ex)
         }
-        // Business logic
-        val finalPrice = paymentIn.price.toFloat() * paymentIn.priceModifier
-        val points = paymentIn.price.toFloat() * paymentMethod.points
-        // Persistence
-        return salesRepository.save(
-            Sales(
-                null,
-                finalPrice,
-                points,
-                OffsetDateTime.parse(paymentIn.dateTime),
-                OffsetDateTime.now()
+
+        return paymentMethodRepository.findByPaymentMethod(paymentIn.paymentMethod).doOnError {
+            throw PosApplicationError(
+                ErrorType.ExecutionAborted,
+                "Internal server error"
             )
-        ).awaitSingleOrNull().let {
-            if (it == null) {
+        }.switchIfEmpty(
+            Mono.error(
+                PosApplicationError(
+                    ErrorType.ValidationError,
+                    "Payment method with type ${paymentIn.paymentMethod} was not found"
+                )
+            )
+        ).flatMap { paymentMethod ->
+            // Validation
+            if (paymentIn.priceModifier < paymentMethod.priceModifierFrom ||
+                paymentIn.priceModifier > paymentMethod.priceModifierTo
+            ) {
+                throw PosApplicationError(
+                    ErrorType.ValidationError,
+                    """Price Modifier must be between ${paymentMethod.priceModifierFrom} 
+                        |and ${paymentMethod.priceModifierTo}
+                    """.trimMargin()
+                )
+            }
+            // Business logic
+            val finalPrice = paymentIn.price.toFloat() * paymentIn.priceModifier
+            val points = paymentIn.price.toFloat() * paymentMethod.points
+            // Persistence
+            salesRepository.save(
+                Sales(
+                    null,
+                    finalPrice,
+                    points,
+                    OffsetDateTime.parse(paymentIn.dateTime),
+                    OffsetDateTime.now()
+                )
+            ).doOnError {
                 throw PosApplicationError(
                     ErrorType.ExecutionAborted,
-                    "Could not make payment"
+                    "Internal server error"
                 )
-            } else {
-                PaymentOut(it.sales.toString(), it.points)
+            }.flatMap {
+                if (it == null) {
+                    throw PosApplicationError(
+                        ErrorType.ExecutionAborted,
+                        "Could not make payment"
+                    )
+                }
+                Mono.just(PaymentOut(it.sales.toString(), it.points))
             }
         }
     }
@@ -72,10 +90,11 @@ class SalesService(
                 it.toSalesHistoryOut()
             }
         } catch (parseError: DateTimeParseException) {
-            logger.error("Invalid date range", parseError)
-            throw PosApplicationError(
-                ErrorType.ExecutionAborted,
-                "Invalid date range"
+            Flux.error(
+                PosApplicationError(
+                    ErrorType.ExecutionAborted,
+                    "Invalid date range"
+                )
             )
         }
     }
